@@ -1,5 +1,9 @@
 syntax = "proto3";
+// куда положим кодогенерацию
 option go_package = "/gen";
+
+
+// структура metadata
 message Metadata {
     string id = 1;
     string title = 2;
@@ -7,8 +11,77 @@ message Metadata {
     string director = 4;
 }
 
+// структура MovieDetails
 message MovieDetails {
-    float rating = 1;
+    double rating = 1;
     Metadata metadata = 2;
 }
 
+// gRPC сервис MetadataService
+service MetadataService {
+    rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse);
+    rpc PutMetadata(PutMetadataRequest) returns (PutMetadataResponse);
+}
+
+// GetMetadata просит идентификатор
+message GetMetadataRequest {
+    string movie_id = 1;
+}
+
+// GetMetadata возвращает Metadata
+message GetMetadataResponse {
+    Metadata metadata = 1;
+}
+
+// PutMetadata просит Metadata
+message PutMetadataRequest {
+    Metadata metadata = 1;
+}
+
+// PutMetadata возвращает чет не че не возвращает
+message PutMetadataResponse {
+}
+
+// сервис RatingService
+service RatingService {
+    rpc GetAggregatedRating(GetAggregatedRatingRequest) returns (GetAggregatedRatingResponse);
+    rpc PutRating(PutRatingRequest) returns (PutRatingResponse);
+}
+
+// GetAggregatedRating просит идентификатор и тип рейтинга
+message GetAggregatedRatingRequest {
+    string record_id = 1;
+    string record_type = 2;
+}
+
+// GetAggregatedRating возвразщает величину рейтинга
+message GetAggregatedRatingResponse {
+    double rating_value = 1;
+}
+
+// PutRating просит значение рейтинга которое нужно положить
+message PutRatingRequest {
+    string user_id = 1;
+    string record_id = 2;
+    string record_type = 3;
+    int32 rating_value = 4;
+}
+
+// PutRating возвращает опять пусто
+message PutRatingResponse {
+}
+
+// сервис MovieService
+service MovieService {
+    rpc GetMovieDetails(GetMovieDetailsRequest) returns (GetMovieDetailsResponse);
+}
+
+// GetMovieDetails просит идентификатор
+message GetMovieDetailsRequest {
+    string movie_id = 1;
+}
+
+// GetMovieDetails возвращает MovieDetails
+message GetMovieDetailsResponse {
+    MovieDetails movie_details = 1;
+}
